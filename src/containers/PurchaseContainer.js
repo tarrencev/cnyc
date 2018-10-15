@@ -3,7 +3,7 @@ import { compose, lifecycle } from "recompose";
 import Web3Utils from "web3-utils";
 import JSEncrypt from "jsencrypt";
 
-import { actions, selectors } from "../contracts/cnyct";
+import { actions, selectors, instance } from "../contracts/cnyct";
 
 import Purchase from "../components/Purchase";
 import ipfs from "../utils/ipfs";
@@ -33,7 +33,8 @@ const mapDispatchToProps = (dispatch, props) => ({
         .send(Web3Utils.asciiToHex(hash))
     );
   },
-  calculatePrice: () => dispatch(actions.methods.calculatePrice().call())
+  calculatePrice: () => dispatch(actions.methods.calculatePrice().call()),
+  resolveEnsAddress: () => dispatch(actions.methods.resolveEnsAddress().call())
 });
 
 export default compose(
@@ -44,6 +45,8 @@ export default compose(
   lifecycle({
     componentDidMount() {
       if (!this.props.price) this.props.calculatePrice();
+      console.log("instance: ", instance);
+      if (this.props.price) this.props.resolveEnsAddress();
     }
   })
 )(Purchase);
